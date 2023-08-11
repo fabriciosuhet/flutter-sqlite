@@ -4,19 +4,20 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseSqlite {
-  // Future<Database> openConnection() async {
-  Future<void> openConnection() async {
+  Future<Database> openConnection() async {
     var databasePath = await getDatabasesPath();
     final databaseFinalPath = join(databasePath, 'SQLITE_EXAMPLE');
 
-    await openDatabase(databaseFinalPath,
+    return await openDatabase(databaseFinalPath,
         version: 2, onConfigure: (db) async {
           await db.execute('PRAGMA foreing_keys = ON');
         },
         // Chamado somente no momento de criação do banco de dados
         // primeira vez que carrega o aplicativo
         onCreate: (Database db, int version) {
+        
       final batch = db.batch();
+      print('onCREATE CHAMADO');
 
       batch.execute('''
             create table teste(
@@ -29,7 +30,9 @@ class DatabaseSqlite {
 
         // Será chamando sempre que ouver uma alteração no version incrimental ( 1 -> 2)
         onUpgrade: (Database db, int oldVersion, int version) {
+          
       final batch = db.batch();
+      print('onUPGRADE CHAMADO');
 
       if (oldVersion == 1) {
         batch.execute('''
@@ -44,7 +47,9 @@ class DatabaseSqlite {
 
         // Será chamando sempre que ouver uma alteração no version decremental ( 2 -> 1)
         onDowngrade: (Database db, int oldVersion, int version) {
+          
       final batch = db.batch();
+      print('onDOWNGRADE CHAMADO');
 
       if (oldVersion == 3) {
         batch.execute('''
